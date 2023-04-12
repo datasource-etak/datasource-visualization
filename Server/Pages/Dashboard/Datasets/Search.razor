@@ -1,0 +1,202 @@
+﻿@page "/dashboard/datasets/search"
+@using Microsoft.AspNetCore.Mvc.Rendering;
+@attribute [Authorize]
+<PageTitle>Datasource | @T["Datasets.Search"]</PageTitle>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        <article class="prose xl:max-w-none">
+            <h1>@T["Datasets.Search.Title"]</h1>
+            <p class="lead">@T["Datasets.Search.Help"]</p>
+        </article>
+    </div>
+</div>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        @if (Loading)
+        {
+            <div class="flex p-4 mb-4 text-sm text-info-800 border border-info-300 rounded-lg bg-info-50" role="alert">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="sr-only">@T["Common.Loading"]</span>
+                <div>
+                    <span class="font-medium">@T["Common.Loading"]</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            @if (Error)
+            {
+                <div class="flex p-4 mb-4 bg-error-200 border-t-4 border-error-500 text-error-700" role="alert">
+                    <svg class="flex-shrink-0 w-5 h-5 text-error-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div class="ml-3 text-sm font-medium">
+                        @ErrorMessage
+                    </div>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-error-200 text-error-500 rounded-lg focus:ring-2 focus:ring-error-400 p-1.5 hover:bg-error-50 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { Error = false;}">
+                        <span class="sr-only">Dismiss</span>
+                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            }
+            <div class="overflow-hidden bg-white border border-secondary-300 shadow sm:rounded-lg z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                    <div class="w-full md:w-1/2-1">
+                        <div class="flex items-center">
+                            <label for="simple-keyword-search" class="sr-only">@T["Datasets.Search"]</label>
+                            <div class="relative w-full">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input type="search" id="simple-keyword-search" class="block w-full p-4 pl-10 text-sm text-secondary-900 border border-secondary-300 rounded-lg bg-secondary-100 focus:ring-primary-500 focus:border-primary-500"
+                                       placeholder="@T["Datasets.Search.Placeholder.Text"]" @bind="@Keyword" @onkeyup="SearchKeyPress" required>
+                                <button type="submit" class="text-white absolute bottom-2.5 right-2.5 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2"
+                                    @onclick=@(async () => await ReloadAsync()) disabled="@Busy">
+                                    @T["Datasets.Search"]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Results is not null && Results.Data.Count() > 0)
+                    {
+                        <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                            @if (AvailablePageSizes is not null)
+                            {
+                                var pageSizes = AvailablePageSizes.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                var pageSizeOptions = new List<SelectListItem>();
+                                if (pageSizes.Any())
+                                {
+                                    if (PageSize <= 0 || !pageSizes.Contains(PageSize.ToString()))
+                                    {
+                                        if (int.TryParse(pageSizes.FirstOrDefault(), out var temp))
+                                        {
+                                            if (temp > 0)
+                                                PageSize = temp;
+                                        }
+                                    }
+                                    foreach (var pageSize in pageSizes)
+                                    {
+                                        if (!int.TryParse(pageSize, out var temp))
+                                            continue;
+
+                                        if (temp <= 0)
+                                            continue;
+
+                                        pageSizeOptions.Add(new SelectListItem() { Text = pageSize, Value = pageSize });
+                                    }
+                                    if (pageSizeOptions.Any())
+                                    {
+                                        pageSizeOptions = pageSizeOptions.OrderBy(x => int.Parse(x.Value)).ToList();
+
+                                        if (PageSize <= 0)
+                                        {
+                                            PageSize = int.Parse(pageSizeOptions.First().Value);
+                                        }
+                                        <select value="@PageSize" @onchange="OnPageSizeChanged" class="w-full md:w-auto items-center justify-center py-2 pr-8 text-sm font-medium text-secondary-900 focus:outline-none bg-white rounded-lg border border-secondary-300 hover:bg-secondary-100 hover:text-primary-700 focus:z-10">
+                                            @foreach (var pageSizeOption in pageSizeOptions)
+                                            {
+                                                <option value="@pageSizeOption.Value">
+                                                    @pageSizeOption.Text
+                                                </option>
+                                            }
+                                        </select>
+                                    }
+                                }
+                            }
+                            <div class="flex items-center space-x-3 w-full md:w-auto">
+                                <button class="relative inline-flex items-center rounded-md border border-secondary-300 bg-white px-4 py-2 text-sm font-medium text-secondary-700 hover:bg-secondary-200 hover:text-primary-700 focus:z-20" @onclick=@(async () => await ReloadAsync()) disabled="@Busy">
+                                    <span class="sr-only">@T["Common.Refresh"]</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-2 h-5 w-5 text-secondary-500">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    @T["Common.Refresh"]
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="overflow-x-auto">
+                    @if (string.IsNullOrWhiteSpace(Keyword))
+                    {
+                        <div class="flex p-4 bg-info-200 border-t-4 border-info-500 text-info-700" role="alert">
+                            <svg class="flex-shrink-0 w-5 h-5 text-info-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="ml-3 text-sm font-medium">
+                                @T["Datasets.Search.InputSearchKeyword"]
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @if (Results is null)
+                        {
+                            <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                                <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div class="ml-3 text-sm font-medium">
+                                    @T["Datasets.RemoteError"]
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @if (Results.Data.Count() <= 0)
+                            {
+                                <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                                    <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="ml-3 text-sm font-medium">
+                                        @T["Datasets.Search.NoDatasetsFound"]
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <table class="w-full text-sm text-left text-secondary-500 table-auto">
+                                    <thead class="text-xs text-secondary-700 uppercase bg-secondary-100">
+                                        <tr class="hidden sm:table-row">
+                                            <th scope="col" class="px-4 py-3">@T["Datasets.Fields.Name"]</th>
+                                            <th scope="col" class="px-4 py-3">@T["Datasets.Fields.Description"]</th>
+                                            <th scope="col" class="px-4 py-3">@T["Datasets.Fields.SourceName"]</th>
+                                            <th scope="col" class="px-4 py-3">
+                                                <span class="sr-only">Actions</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var dataset in Results.Data)
+                                        {
+                                            <tr class="border-b flex flex-col mb-4 sm:table-row">
+                                                <th scope="row" class="px-4 py-3 font-medium text-secondary-900">@dataset.DatasetName</th>
+                                                <td class="px-4 py-3">@dataset.DatasetDescription</td>
+                                                <td class="px-4 py-3">@dataset.SourceName</td>
+                                                <td class="px-4 py-3 flex items-center justify-end">
+                                                    <button type="button" @onclick="@(e => ViewFilters(dataset))" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-secondary-500 hover:text-secondary-800 rounded-lg focus:outline-none">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                                            <path d="M10 3.75a2 2 0 10-4 0 2 2 0 004 0zM17.25 4.5a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM5 3.75a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM4.25 17a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM17.25 17a.75.75 0 000-1.5h-5.5a.75.75 0 000 1.5h5.5zM9 10a.75.75 0 01-.75.75h-5.5a.75.75 0 010-1.5h5.5A.75.75 0 019 10zM17.25 10.75a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5h1.5zM14 10a2 2 0 10-4 0 2 2 0 004 0zM10 16.25a2 2 0 10-4 0 2 2 0 004 0z" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <Pager @bind-PageNumber="Page" PageSize="PageSize" TotalItems="Results.RecordsTotal" RefreshRequestedHandler="async() => { await ReloadAsync(); }" />
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,22 @@
+﻿@page "/"
+@namespace BlazorDatasource.Server.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+@using System.Globalization
+@using BlazorDatasource.Shared.Infrastructure;
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Localization
+@{
+    this.HttpContext.Response.Cookies.Append(
+        CookieRequestCultureProvider.DefaultCookieName,
+        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture)));
+
+    var tokens = new InitialApplicationState
+    {
+        AccessToken = await HttpContext.GetTokenAsync("access_token"),
+        RefreshToken = await HttpContext.GetTokenAsync("refresh_token")
+    };
+}
+<component type="typeof(App)" param-InitialState="tokens" render-mode="ServerPrerendered" />

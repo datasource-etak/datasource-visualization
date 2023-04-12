@@ -1,0 +1,26 @@
+﻿@namespace BlazorDatasource.Server.Areas.Identity.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth h-full bg-secondary-500 bg-opacity-75 transition-opacity">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Datasource | @ViewBag.Title</title>
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <link href="~/css/tailwind/tailwind.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body class="text-base h-full">
+    <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8 p-6">
+            <div>
+                <a href="./">
+                    <img class="mx-auto h-12 w-auto" src="~/techwind-logo-icon-64.png" alt="@T["Common.ApplicationName"]">
+                </a>
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-secondary-900">@ViewData["Title"]</h2>
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>

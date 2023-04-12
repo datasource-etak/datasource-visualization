@@ -1,0 +1,45 @@
+﻿<div class="group/chart overflow-hidden bg-white leading-5 shadow-xl shadow-black/5 sm:rounded-lg mt-2 pointer-events-auto hover:bg-secondary-100 @(IsDefaultDatasetViewChart?"ring-2 ring-primary-600":"ring-1 ring-secondary-700/10")" @onclick="ClickChartEventHandler" disabled="@Busy">
+    <div class="invisible group-hover/chart:visible px-4 py-5 sm:px-6 ">
+        <div class="flex p-4 bg-info-200 border-t-4 border-info-500 text-info-700" role="alert">
+            @if (Busy)
+            {
+                <svg class="flex-shrink-0 animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div class="ml-3 text-sm font-medium">
+                    @T["Common.Busy"]
+                </div>
+            }
+            else
+            {
+                <svg class="flex-shrink-0 w-5 h-5 text-info-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="ml-3 text-sm font-medium">
+                    @T["Chart.Select.Help.Text"] @(IsDefaultDatasetViewChart ? @T["Chart.Select.Help.UnSelectText"] : @T["Chart.Select.Help.SelectText"])
+                </div>
+            }
+        </div>
+    </div>
+    <div class="px-4 py-5 sm:px-6 ">
+        <div class="flex justify-between">
+            <div>
+                <h3 class="text-base font-semibold leading-6 text-secondary-900">
+                    @ChartTitle
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-secondary-500">@T[$"Enums.ChartType.{@Type}"]</p>
+            </div>
+            @if (IsDefaultDatasetViewChart)
+            {
+                <svg class="h-5 w-5 flex-none" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4Z" fill="#4F46E5"></path>
+                </svg>
+            }
+        </div>
+    </div>
+    <canvas id="@ComponentInstanceId" aria-label="chart @Type" role="img" class="border-t border-secondary-200 p-4 max-h-96 w-full">
+        Your browser does not support the canvas element
+    </canvas>
+</div>
+

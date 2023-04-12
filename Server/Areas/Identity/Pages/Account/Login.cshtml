@@ -1,0 +1,41 @@
+﻿@page "/sign-in"
+@model BlazorDatasource.Server.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = T["Account.Login.Title"];
+}
+<section class="flex items-center">
+    <div class="container">
+        <div class="flex justify-center">
+            <div class="max-w-[400px] w-full m-auto p-6 bg-white shadow-md rounded-md">
+                <form id="login-form" method="post" role="form">
+                    <div asp-validation-summary="ModelOnly" class="flex p-4 mb-4 bg-error-200 border-t-4 border-error-500 text-sm font-medium text-error-700" role="alert">
+                        <svg class="flex-shrink-0 w-5 h-5 text-error-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <div class="grid grid-cols-1">
+                        <div class="mb-4">
+                            <label class="font-semibold" asp-for="Input.Username">@T["Account.Login.Fields.Username"]</label>
+                            <input type="text" class="form-input mt-3" placeholder="@T["Account.Login.Fields.Username"]" aria-required="true" asp-for="Input.Username">
+                            <span asp-validation-for="Input.Username" class="text-error-400"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label class="font-semibold" asp-for="Input.Password">@T["Account.Login.Fields.Password"]</label>
+                            <input type="password" class="form-input mt-3" placeholder="@T["Account.Login.Fields.Password"]" aria-required="true" asp-for="Input.Password">
+                            <span asp-validation-for="Input.Password" class="text-error-400"></span>
+                        </div>
+                        <div class="mb-4">
+                            <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <!-- Heroicon name: mini/lock-closed -->
+                                    <svg class="h-5 w-5 text-primary-500 group-hover:text-primary-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                @T["Account.Login"]
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

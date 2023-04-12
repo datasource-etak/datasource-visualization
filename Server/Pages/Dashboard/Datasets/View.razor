@@ -1,0 +1,237 @@
+﻿@page "/dashboard/datasets/downloaded/view/{DownloadedDatasetUUId?}/{DownloadedDatasetName?}"
+@using Microsoft.AspNetCore.Mvc.Rendering;
+@attribute [Authorize]
+<PageTitle>Datasource | @T["Datasets.Downloaded.View"]</PageTitle>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        <article class="prose xl:max-w-none">
+            <h1>@T["Datasets.Downloaded.View.Title"]</h1>
+            <p class="lead">@T["Datasets.Downloaded.View.Help"]</p>
+        </article>
+    </div>
+</div>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        @if (Loading)
+        {
+            <div class="flex p-4 mb-4 text-sm text-info-800 border border-info-300 rounded-lg bg-info-50" role="alert">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="sr-only">@T["Common.Loading"]</span>
+                <div>
+                    <span class="font-medium">@T["Common.Loading"]</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            @if (Error)
+            {
+                <div class="flex p-4 mb-4 bg-error-200 border-t-4 border-error-500 text-error-700" role="alert">
+                    <svg class="flex-shrink-0 w-5 h-5 text-error-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div class="ml-3 text-sm font-medium">
+                        @ErrorMessage
+                    </div>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-error-200 text-error-500 rounded-lg focus:ring-2 focus:ring-error-400 p-1.5 hover:bg-error-50 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { Error = false;}">
+                        <span class="sr-only">Dismiss</span>
+                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            }
+            @if (RenderProperties)
+            {
+                <div class="overflow-hidden bg-white border border-secondary-300 shadow sm:rounded-lg z-10">
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                        @if (Results is not null && Results.Data.Count() > 0)
+                        {
+                            <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                                @if (AvailablePageSizes is not null)
+                                {
+                                    var pageSizes = AvailablePageSizes.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                    var pageSizeOptions = new List<SelectListItem>();
+                                    if (pageSizes.Any())
+                                    {
+                                        if (PageSize <= 0 || !pageSizes.Contains(PageSize.ToString()))
+                                        {
+                                            if (int.TryParse(pageSizes.FirstOrDefault(), out var temp))
+                                            {
+                                                if (temp > 0)
+                                                    PageSize = temp;
+                                            }
+                                        }
+                                        foreach (var pageSize in pageSizes)
+                                        {
+                                            if (!int.TryParse(pageSize, out var temp))
+                                                continue;
+
+                                            if (temp <= 0)
+                                                continue;
+
+                                            pageSizeOptions.Add(new SelectListItem() { Text = pageSize, Value = pageSize });
+                                        }
+                                        if (pageSizeOptions.Any())
+                                        {
+                                            pageSizeOptions = pageSizeOptions.OrderBy(x => int.Parse(x.Value)).ToList();
+
+                                            if (PageSize <= 0)
+                                            {
+                                                PageSize = int.Parse(pageSizeOptions.First().Value);
+                                            }
+                                            <select value="@PageSize" @onchange="OnPageSizeChanged" class="w-full md:w-auto items-center justify-center py-2 pr-8 text-sm font-medium text-secondary-900 focus:outline-none bg-white rounded-lg border border-secondary-300 hover:bg-secondary-100 hover:text-primary-700 focus:z-10">
+                                                @foreach (var pageSizeOption in pageSizeOptions)
+                                                {
+                                                    <option value="@pageSizeOption.Value">
+                                                        @pageSizeOption.Text
+                                                    </option>
+                                                }
+                                            </select>
+                                        }
+                                    }
+                                }
+                                <div class="flex items-center space-x-3 w-full md:w-auto">
+                                    <button class="relative inline-flex items-center rounded-md border border-secondary-300 bg-white px-4 py-2 text-sm font-medium text-secondary-700 hover:bg-secondary-200 hover:text-primary-700 focus:z-20" @onclick=@(async () => await ReloadAsync()) disabled="@Busy">
+                                        <span class="sr-only">@T["Common.Refresh"]</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-2 h-5 w-5 text-secondary-500">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                        @T["Common.Refresh"]
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="overflow-x-auto">
+                        @if (Results is null)
+                        {
+                            <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                                <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div class="ml-3 text-sm font-medium">
+                                    @T["Datasets.RemoteError"]
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @if (Results.Data.Count() <= 0)
+                            {
+                                <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                                    <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="ml-3 text-sm font-medium">
+                                        @T["Datasets.Downloaded.View.NoTimelinesFound"]
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var downloadedDataset in Results.Data)
+                                {
+                                    <div class="overflow-hidden bg-white">
+                                        <div class="border-t border-secondary-200">
+                                            <dl>
+                                                @foreach (var property in downloadedDataset.Properties)
+                                                {
+                                                    <div class="bg-secondary-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                        <dt class="text-sm font-medium text-secondary-500">@property.Key</dt>
+                                                        <dd class="mt-1 text-sm text-secondary-900 sm:col-span-2 sm:mt-0">@property.Value</dd>
+                                                    </div>
+                                                }
+                                            </dl>
+                                        </div>
+                                    </div>
+                                }
+                                <Pager @bind-PageNumber="Page" PageSize="PageSize" TotalItems="Results.RecordsTotal" RefreshRequestedHandler="async() => { await ReloadAsync(); }" />
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            <div class="overflow-hidden bg-white border border-secondary-300 shadow sm:rounded-lg mt-2">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900">@T["Datasets.Downloaded.View.ChartData.Title"]</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">@T["Datasets.Downloaded.View.ChartData.Help"]</p>
+                </div>
+                <div class="border-t border-gray-200">
+                    @if (Results is null)
+                    {
+                        <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                            <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="ml-3 text-sm font-medium">
+                                @T["Datasets.RemoteError"]
+                            </div>
+                        </div>
+                    }
+                    @if (Results is not null && ChartData.Count <= 0)
+                    {
+                        <div class="flex p-4 bg-warning-200 border-t-4 border-warning-500 text-warning-700" role="alert">
+                            <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="ml-3 text-sm font-medium">
+                                @T["Datasets.Downloaded.View.NoTimelinesFound"]
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <dl>
+                            @foreach (var item in ChartData)
+                            {
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">@item.Key</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">@item.Value</dd>
+                                </div>
+                            }
+                        </dl>
+                    }
+                </div>
+                @if (ChartData.Count > 0)
+                {
+                    <div class="px-4 py-4 sm:px-6 border-t border-gray-200">
+                        <div class="relative inline-flex items-center">
+                            @if (DisplayCharts)
+                            {
+                                <div class="pointer-events-auto h-6 w-10 rounded-full p-1 ring-1 ring-inset transition duration-200 ease-in-out bg-primary-600 ring-black/20" @onclick="ToggleDisplayCharts">
+                                    <div class="h-4 w-4 rounded-full bg-white shadow-sm ring-1 ring-slate-700/10 transition duration-200 ease-in-out translate-x-4"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="pointer-events-auto h-6 w-10 rounded-full p-1 ring-1 ring-inset transition duration-200 ease-in-out bg-secondary-900/10 ring-secondary-900/5" @onclick="ToggleDisplayCharts">
+                                    <div class="h-4 w-4 rounded-full bg-white shadow-sm ring-1 ring-secondary-700/10 transition duration-200 ease-in-out"></div>
+                                </div>
+                            }
+                            <span class="ml-3 text-sm font-medium text-secondary-900">@T["Datasets.Downloaded.View.Visualize"]</span>
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (ChartData.Count > 0)
+            {
+                <!-- this is where the Charts are displayed grid grid-cols-1 gap-2 mt-2-->
+                <div class="relative z-10 @(DisplayCharts?"visible":"invisible")">
+                    <div class="space-y-6">
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Line" Type="Models.Common.ChartType.Line" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Scatter" Type="Models.Common.ChartType.Scatter" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Area" Type="Models.Common.ChartType.Area" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Bar" Type="Models.Common.ChartType.Bar" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.HorizontalBar" Type="Models.Common.ChartType.HorizontalBar" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Pie" Type="Models.Common.ChartType.Pie" />
+                        <Chart ChartTitle="@DownloadedDatasetName" ChartData="ChartData" Busy="Busy" SetDefaultChartTypeCallback="async (selectedChartType) => await HandleDefaultChartTypeSelection(selectedChartType)" IsDefaultDatasetViewChart="DefaultChartType == Models.Common.ChartType.Doughnut" Type="Models.Common.ChartType.Doughnut" />
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

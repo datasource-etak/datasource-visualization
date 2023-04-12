@@ -1,0 +1,268 @@
+﻿@page "/dashboard"
+@using BlazorDatasource.Shared.Infrastructure;
+@using System.Security.Claims
+@attribute [Authorize]
+@inject TokenProvider tokenProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<PageTitle>Datasource | Dashboard</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <article class="prose xl:max-w-none">
+            <h1>API Documentation</h1>
+            <p class="lead">Use the Protocol API to access contacts, conversations, group messages, and more and seamlessly integrate your product into the workflows of dozens of devoted Protocol users.</p>
+        </article>
+        <div class="my-16 xl:max-w-none">
+            <h2 id="resources" class="scroll-mt-24">
+                <a class="group text-inherit no-underline hover:text-inherit" href="/#resources">
+                    <div class="absolute mt-1 ml-[calc(-1*var(--width))] hidden w-[var(--width)] opacity-0 transition [--width:calc(2.625rem+0.5px+50%-min(50%,calc(theme(maxWidth.lg)+theme(spacing.8))))] group-hover:opacity-100 group-focus:opacity-100 md:block lg:z-50 2xl:[--width:theme(spacing.10)]">
+                        <div class="group/anchor block h-5 w-5 rounded-lg bg-secondary-100 ring-1 ring-inset ring-secondary-300 transition hover:ring-secondary-500">
+                            <svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" aria-hidden="true" class="h-5 w-5 stroke-secondary-500 transition">
+                                <path d="m6.5 11.5-.964-.964a3.535 3.535 0 1 1 5-5l.964.964m2 2 .964.964a3.536 3.536 0 0 1-5 5L8.5 13.5m0-5 3 3"></path>
+                            </svg>
+                        </div>
+                    </div>Resources
+                </a>
+            </h2>
+            <div class="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-secondary-900/5 pt-10 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="group relative flex rounded-2xl bg-secondary-100 transition-shadow hover:shadow-md hover:shadow-secondary-900/5">
+                    <div class="pointer-events-none">
+                        <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5">
+                                <defs>
+                                    <pattern id=":R56hd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R56hd6:)"></rect>
+                                <svg x="50%" y="16" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r @*from-[#D7EDEA] to-[#F4FBDF]*@ from-primary-200 to-primary-50 opacity-0 transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 23px 39px, white, transparent);"></div>
+                        <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 23px 39px, white, transparent);">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70">
+                                <defs>
+                                    <pattern id=":R1d6hd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R1d6hd6:)"></rect>
+                                <svg x="50%" y="16" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-secondary-900/7.5 group-hover:ring-secondary-900/10"></div>
+                    <div class="relative rounded-2xl px-4 pt-16 pb-4">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-secondary-900/5 ring-1 ring-secondary-900/25 backdrop-blur-[2px] transition duration-300 group-hover:bg-white/50 group-hover:ring-secondary-900/25">
+                            <svg viewBox="0 0 20 20" aria-hidden="true" class="h-5 w-5 fill-secondary-700/10 stroke-secondary-700 transition-colors duration-300 group-hover:stroke-secondary-900">
+                                <path stroke-width="0" fill-rule="evenodd" clip-rule="evenodd" d="M10 .5a9.5 9.5 0 0 1 5.598 17.177C14.466 15.177 12.383 13.5 10 13.5s-4.466 1.677-5.598 4.177A9.5 9.5 0 0 1 10 .5ZM12.5 8a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M10 .5a9.5 9.5 0 0 1 5.598 17.177A9.458 9.458 0 0 1 10 19.5a9.458 9.458 0 0 1-5.598-1.823A9.5 9.5 0 0 1 10 .5Z"></path>
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.402 17.677C5.534 15.177 7.617 13.5 10 13.5s4.466 1.677 5.598 4.177M10 5.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-sm font-semibold leading-7 text-secondary-900">
+                            <a href="/contacts">
+                                <span class="absolute inset-0 rounded-2xl"></span>
+                                Contacts
+                            </a>
+                        </h3>
+                        <p class="mt-1 text-sm text-secondary-600">Learn about the contact model and how to create, retrieve, update, delete, and list contacts.</p>
+                    </div>
+                </div>
+                <div class="group relative flex rounded-2xl bg-secondary-100 transition-shadow hover:shadow-md hover:shadow-secondary-900/5">
+                    <div class="pointer-events-none">
+                        <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5">
+                                <defs>
+                                    <pattern id=":R5ahd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="-6">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R5ahd6:)"></rect>
+                                <svg x="50%" y="-6" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="-72" y="112"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r @*from-[#D7EDEA] to-[#F4FBDF]*@ from-primary-200 to-primary-50 opacity-0 transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 73px 12px, white, transparent);"></div>
+                        <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 73px 12px, white, transparent);">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70">
+                                <defs>
+                                    <pattern id=":R1dahd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="-6">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R1dahd6:)"></rect>
+                                <svg x="50%" y="-6" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="-72" y="112"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-secondary-900/7.5 group-hover:ring-secondary-900/10"></div>
+                    <div class="relative rounded-2xl px-4 pt-16 pb-4">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-secondary-900/5 ring-1 ring-secondary-900/25 backdrop-blur-[2px] transition duration-300 group-hover:bg-white/50 group-hover:ring-secondary-900/25">
+                            <svg viewBox="0 0 20 20" aria-hidden="true" class="h-5 w-5 fill-secondary-700/10 stroke-secondary-700 transition-colors duration-300 group-hover:stroke-secondary-900">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 16.5c4.142 0 7.5-3.134 7.5-7s-3.358-7-7.5-7c-4.142 0-7.5 3.134-7.5 7 0 1.941.846 3.698 2.214 4.966L3.5 17.5c2.231 0 3.633-.553 4.513-1.248A8.014 8.014 0 0 0 10 16.5Z"></path>
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.5h5M8.5 11.5h3"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-sm font-semibold leading-7 text-secondary-900">
+                            <a href="/conversations">
+                                <span class="absolute inset-0 rounded-2xl"></span>
+                                Conversations
+                            </a>
+                        </h3>
+                        <p class="mt-1 text-sm text-secondary-600">Learn about the conversation model and how to create, retrieve, update, delete, and list conversations.</p>
+                    </div>
+                </div>
+                <div class="group relative flex rounded-2xl bg-secondary-100 transition-shadow hover:shadow-md hover:shadow-secondary-900/5">
+                    <div class="pointer-events-none">
+                        <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5">
+                                <defs>
+                                    <pattern id=":R5ehd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="32">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R5ehd6:)"></rect>
+                                <svg x="50%" y="32" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="112"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="224"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r @*from-[#D7EDEA] to-[#F4FBDF]*@ from-primary-200 to-primary-50 opacity-0 transition duration-300 group-hover:opacity-100" style="mask-image:radial-gradient(180px at 0px 0px, white, transparent);-webkit-mask-image:radial-gradient(180px at 0px 0px, white, transparent)"></div>
+                        <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image:radial-gradient(180px at 0px 0px, white, transparent);-webkit-mask-image:radial-gradient(180px at 0px 0px, white, transparent)">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70">
+                                <defs>
+                                    <pattern id=":R1dehd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="32">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R1dehd6:)"></rect>
+                                <svg x="50%" y="32" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="112"></rect>
+                                    <rect stroke-width="0" width="73" height="57" x="72" y="224"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-secondary-900/7.5 group-hover:ring-secondary-900/10"></div>
+                    <div class="relative rounded-2xl px-4 pt-16 pb-4">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-secondary-900/5 ring-1 ring-secondary-900/25 backdrop-blur-[2px] transition duration-300 group-hover:bg-white/50 group-hover:ring-secondary-900/25">
+                            <svg viewBox="0 0 20 20" aria-hidden="true" class="h-5 w-5 fill-secondary-700/10 stroke-secondary-700 transition-colors duration-300 group-hover:stroke-secondary-900">
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M2.5 5.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-8Z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 10 4.526 5.256c-.7-.607-.271-1.756.655-1.756h9.638c.926 0 1.355 1.15.655 1.756L10 10Z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-sm font-semibold leading-7 text-secondary-900">
+                            <a href="/messages">
+                                <span class="absolute inset-0 rounded-2xl">
+                                </span>Messages
+                            </a>
+                        </h3>
+                        <p class="mt-1 text-sm text-secondary-600">Learn about the message model and how to create, retrieve, update, delete, and list messages.</p>
+                    </div>
+                </div>
+                <div class="group relative flex rounded-2xl bg-secondary-100 transition-shadow hover:shadow-md hover:shadow-secondary-900/5">
+                    <div class="pointer-events-none">
+                        <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5">
+                                <defs>
+                                    <pattern id=":R5ihd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="22">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R5ihd6:)"></rect>
+                                <svg x="50%" y="22" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r @*from-[#D7EDEA] to-[#F4FBDF]*@ from-primary-200 to-primary-50 opacity-0 transition duration-300 group-hover:opacity-100" style="mask-image:radial-gradient(180px at 0px 0px, white, transparent);-webkit-mask-image:radial-gradient(180px at 0px 0px, white, transparent)"></div>
+                        <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image:radial-gradient(180px at 0px 0px, white, transparent);-webkit-mask-image:radial-gradient(180px at 0px 0px, white, transparent)">
+                            <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70">
+                                <defs>
+                                    <pattern id=":R1dihd6:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="22">
+                                        <path d="M.5 56V.5H72" fill="none"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" stroke-width="0" fill="url(#:R1dihd6:)"></rect>
+                                <svg x="50%" y="22" class="overflow-visible">
+                                    <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
+                                </svg>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-secondary-900/7.5 group-hover:ring-secondary-900/10"></div>
+                    <div class="relative rounded-2xl px-4 pt-16 pb-4">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-secondary-900/5 ring-1 ring-secondary-900/25 backdrop-blur-[2px] transition duration-300 group-hover:bg-white/50 group-hover:ring-secondary-900/25">
+                            <svg viewBox="0 0 20 20" aria-hidden="true" class="h-5 w-5 fill-secondary-700/10 stroke-secondary-700 transition-colors duration-300 group-hover:stroke-secondary-900">
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M10.046 16H1.955a.458.458 0 0 1-.455-.459C1.5 13.056 3.515 11 6 11h.5"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15.454C7.5 12.442 9.988 10 13 10s5.5 2.442 5.5 5.454a.545.545 0 0 1-.546.546H8.045a.545.545 0 0 1-.545-.546Z"></path>
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M6.5 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mt-4 text-sm font-semibold leading-7 text-secondary-900">
+                            <a href="/groups">
+                                <span class="absolute inset-0 rounded-2xl"></span>
+                                Groups
+                            </a>
+                        </h3>
+                        <p class="mt-1 text-sm text-secondary-600">Learn about the group model and how to create, retrieve, update, delete, and list groups.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @AccessToken
+        @RefreshToken
+
+        @if (claims.Count() > 0)
+        {
+            <ul>
+                @foreach (var claim in claims)
+                {
+                    <li>@claim.Type: @claim.Value</li>
+                }
+            </ul>
+        }
+    </Authorized>
+</AuthorizeView>
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private string? AccessToken { get; set; }
+
+    private string? RefreshToken { get; set; }
+
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthenticationStateTask is not null)
+        {
+            var authState = await AuthenticationStateTask;
+            var user = authState?.User;
+
+            AccessToken = tokenProvider.AccessToken;
+            RefreshToken = tokenProvider.RefreshToken;
+
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                claims = user.Claims;
+            }
+
+            await base.OnInitializedAsync();
+        }
+    }
+}

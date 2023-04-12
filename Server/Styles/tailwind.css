@@ -1,0 +1,9 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .form-input {
+        @apply w-full rounded-md border border-inherit bg-transparent px-2 py-3 outline outline-transparent outline-2 outline-offset-2 focus:border-primary-500 focus:ring-primary-500 sm:text-sm !important;
+    }
+}

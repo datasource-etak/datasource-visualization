@@ -1,0 +1,77 @@
+﻿<div class="overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 sm:w-full sm:max-w-none">
+    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <h3 class="text-lg font-medium leading-6 text-secondary-900" id="modal-title">@T["Languages.XmlFile"]</h3>
+                <div class="mt-2 flex justify-center rounded-md border-2 border-dashed border-secondary-300 px-6 pt-5 pb-6 w-full">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-secondary-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-secondary-600">
+                            <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-medium text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 hover:text-primary-500">
+                                <span>@T["Common.Fileupload"]</span>
+                                @if (MaxAllowedFiles > 1)
+                                {
+                                    <InputFile OnChange="@UploadFiles" multiple class="sr-only w-full h-full" id="file-upload" name="file-upload" />
+                                }
+                                else
+                                {
+                                    <InputFile OnChange="@UploadFiles" class="sr-only w-full h-full" id="file-upload" name="file-upload" />
+                                }
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @if (IsLoading)
+                {
+                    <div class="w-full mt-1">
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium">@T["Common.Progress"]</span>
+                            <span class="text-sm font-medium text-primary-600">@string.Format("{0:P0}", ProgressPercent)</span>
+                        </div>
+                        <div class="w-full bg-secondary-200 rounded-full h-2.5">
+                            <div class="bg-primary-600 h-2.5 rounded-full" style="width: @string.Format("{0:P0}", ProgressPercent)"></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @if (UploadedFiles.Count > 0)
+                    {
+                        <ul role="list" class="divide-y divide-secondary-200 rounded-md border border-secondary-200 mt-1">
+                            @foreach (var file in UploadedFiles)
+                            {
+                                <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                                    @if (file.Uploaded)
+                                    {
+                                        <div class="flex w-0 flex-1 items-center">
+                                            <svg class="h-5 w-5 flex-shrink-0 text-secondary-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z" clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="ml-2 w-0 flex-1 truncate">@file.FileName</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="block">
+                                            @file.ErrorMessage
+                                        </p>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="bg-secondary-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+        <button type="button" @onclick="@(async () => await ConfirmAsync(true))" class="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm" disabled="@IsLoading">
+            @T["Common.Upload"]
+        </button>
+        <button type="button" @onclick="@(async () => await ConfirmAsync(false))" class="mt-3 inline-flex w-full justify-center rounded-md border border-secondary-300 bg-white px-4 py-2 text-base font-medium text-secondary-700 shadow-sm hover:bg-secondary-100 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" disabled="@IsLoading">
+            @T["Common.Cancel"]
+        </button>
+    </div>
+</div>

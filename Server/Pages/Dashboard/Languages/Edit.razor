@@ -1,0 +1,138 @@
+﻿@page "/dashboard/languages/edit/{LanguageId:int}"
+@attribute [Authorize]
+<PageTitle>Datasource | @T["Languages.Edit"]</PageTitle>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        <article class="prose xl:max-w-none">
+            <h1>@T["Languages.Title"]</h1>
+        </article>
+    </div>
+</div>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 ">
+    @if (EditSuccessState.Success)
+    {
+        <div class="flex p-4 mb-4 bg-success-200 border-t-4 border-success-500 text-success-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-success-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="ml-3 text-sm font-medium">
+                @EditSuccessState.SuccessMessage
+            </div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-success-200 text-success-500 rounded-lg focus:ring-2 focus:ring-success-400 p-1.5 hover:bg-success-100 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { EditSuccessState.Success = false;}">
+                <span class="sr-only">Dismiss</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    }
+    @if (Error)
+    {
+        <div class="flex p-4 mb-4 bg-error-200 border-t-4 border-error-500 text-error-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-error-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="ml-3 text-sm font-medium">
+                @ErrorMessage
+            </div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-error-200 text-error-500 rounded-lg focus:ring-2 focus:ring-error-400 p-1.5 hover:bg-error-100 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { Error = false;}">
+                <span class="sr-only">Dismiss</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    }
+    @if (LanguageModel is null && !Busy)
+    {
+        <div class="flex p-4 mb-4 bg-warning-200 border-t-4 border-warning-500 text-sm font-medium text-warning-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            @T["Language.NotFound.Text"] @LanguageId
+        </div>
+    }
+    else
+    {
+        <div class="mx-auto max-w-none bg-secondary-100 rounded-md p-6">
+            <div class="mt-5 md:col-span-2 md:mt-0">
+                @if (ShowConfirmation)
+                {
+                    <DeletePrompt Confirmation="@(async result => await ConfirmAsync(result))" />
+                }
+                else if (ShowFileUploadDialog)
+                {
+                    <FileUploadPrompt Confirmation="@(async (args) => await ImportXml(args.Item1,args.Item2))" MaxAllowedFiles="1" MaxFileSize="1024 * 1024 * 15" />
+                }
+                else
+                {
+                    <div class="bg-secondary-100 px-4 py-3 text-right sm:px-6 shadow sm:rounded-md sm:w-full">
+                        <div class="sm:flex sm:flex-row-reverse">
+                            <button type="button" disabled="@Busy" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm inline-flex justify-center rounded-md border border-transparent bg-error-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-error-700" @onclick="@(() => { ShowConfirmation = true; })">
+                                @if (Busy)
+                                {
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    @T["Common.Busy"]
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-3 h-5 w-5 hidden sm:block">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    @T["Common.Delete"]
+                                }
+                            </button>
+                            <button type="button" disabled="@Busy" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm inline-flex justify-center bg-white rounded-md border border-secondary-300 py-2 px-4 text-sm font-medium shadow-sm text-secondary-700 hover:bg-secondary-200 hover:text-primary-700 focus:z-20" @onclick="@(() => { ShowFileUploadDialog = true; })">
+                                @if (Busy)
+                                {
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    @T["Common.Busy"]
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-3 h-5 w-5 hidden sm:block">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                    </svg>
+                                    @T["Languages.Import"]
+                                }
+                            </button>
+                            <button type="button" disabled="@Busy" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm inline-flex justify-center bg-white rounded-md border border-secondary-300 py-2 px-4 text-sm font-medium shadow-sm text-secondary-700 hover:bg-secondary-200 hover:text-primary-700 focus:z-20" @onclick="@ExportXml">
+                                @if (Busy)
+                                {
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    @T["Common.Busy"]
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-3 h-5 w-5 hidden sm:block">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>
+                                    @T["Languages.Export"]
+                                }
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="hidden sm:block" aria-hidden="true">
+                <div class="py-5">
+                    <div class="border-b border-secondary-200"></div>
+                </div>
+            </div>
+            <LanguageForm Busy="@Busy"
+                      LanguageModel="@LanguageModel"
+                      IsAdd="false"
+                      CancelRequest="Cancel"
+                      ValidationResult="@(async (args) => await ValidationResultAsync(args.Success,args.ContinueEditing))" />
+        </div>
+    }
+</div>

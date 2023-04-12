@@ -1,0 +1,48 @@
+﻿<nav class="hidden lg:mt-10 lg:block">
+    <ul role="list">
+        <li class="md:hidden">
+            <LanguageSelector />
+        </li>
+        <li class="pb-10">
+            <NavLink class="block py-1 text-sm text-secondary-600 transition hover:bg-secondary-200 hover:text-primary-700 pl-4" ActiveClass="bg-primary-200" href="dashboard" Match="NavLinkMatch.All">
+                @T["Navigation.Dashboard"]
+            </NavLink>
+        </li>
+        <li class="relative mt-6 md:mt-0">
+            <h2 class="text-xs font-semibold">@T["Navigation.Configuration"]</h2>
+            <div class="relative mt-3 pl-2">
+                <div class="absolute inset-x-0 top-0 bg-secondary-800/2.5" style="height: 64px; top: 0px; opacity: 1; border-radius: 8px; transform: none; transform-origin: 50% 50% 0px;"></div>
+                <ul role="list">
+                    <li class="relative">
+                        <NavLink aria-current="page" class="left-2 flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-secondary-600 hover:text-primary-700 hover:bg-secondary-200 border-l" ActiveClass="border-l-primary-500" href="/dashboard/languages">
+                            <span class="truncate">@T["Navigation.Languages"]</span>
+                        </NavLink>
+                    </li>
+                    <li class="relative">
+                        <NavLink class="left-2 flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-secondary-600 hover:text-primary-700 hover:bg-secondary-200 border-l" ActiveClass="border-l-primary-500" href="/dashboard/accounts">
+                            <span class="truncate">@T["Navigation.Accounts"]</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="relative mt-6">
+            <h2 class="text-xs font-semibold">@T["Navigation.Datasets"]</h2>
+            <div class="relative mt-3 pl-2">
+                <div class="absolute inset-x-0 top-0 bg-secondary-800/2.5" style="height: 64px; top: 0px; opacity: 1; border-radius: 8px; transform: none; transform-origin: 50% 50% 0px;"></div>
+                <ul role="list">
+                    <li class="relative">
+                        <NavLink aria-current="page" class="left-2 flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-secondary-600 hover:text-primary-700 hover:bg-secondary-200 border-l" ActiveClass="border-l-primary-500" href="/dashboard/datasets/downloaded">
+                            <span class="truncate">@T["Navigation.DownloadedDatasets"]</span>
+                        </NavLink>
+                    </li>
+                    <li class="relative">
+                        <NavLink class="left-2 flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-secondary-600 hover:text-primary-700 hover:bg-secondary-200 border-l" ActiveClass="border-l-primary-500" href="/dashboard/datasets/search">
+                            <span class="truncate">@T["Navigation.Search"]</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</nav>

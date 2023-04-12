@@ -1,0 +1,120 @@
+﻿@page "/dashboard/accounts/edit/{accountId}"
+@attribute [Authorize]
+<PageTitle>Datasource | @T["Accounts.Edit"]</PageTitle>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-none">
+        <article class="prose xl:max-w-none">
+            <h1>@T["Accounts.Title"]</h1>
+        </article>
+    </div>
+</div>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 ">
+    @if (EditSuccessState.Success)
+    {
+        <div class="flex p-4 mb-4 bg-success-200 border-t-4 border-success-500 text-success-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-success-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="ml-3 text-sm font-medium">
+                @EditSuccessState.SuccessMessage
+            </div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-success-200 text-success-500 rounded-lg focus:ring-2 focus:ring-success-400 p-1.5 hover:bg-success-100 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { EditSuccessState.Success = false;}">
+                <span class="sr-only">Dismiss</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    }
+    @if (Error)
+    {
+        <div class="flex p-4 mb-4 bg-error-200 border-t-4 border-error-500 text-error-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-error-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="ml-3 text-sm font-medium">
+                @ErrorMessage
+            </div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-error-200 text-error-500 rounded-lg focus:ring-2 focus:ring-error-400 p-1.5 hover:bg-error-100 inline-flex h-8 w-8" aria-label="Close" @onclick="async() => { Error = false;}">
+                <span class="sr-only">Dismiss</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    }
+    @if (AccountModel is null && !Busy)
+    {
+        <div class="flex p-4 mb-4 bg-warning-200 border-t-4 border-warning-500 text-sm font-medium text-warning-700" role="alert">
+            <svg class="flex-shrink-0 w-5 h-5 text-warning-700 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            @T["Account.NotFound.Text"] @AccountId
+        </div>
+    }
+    else
+    {
+        <div class="mx-auto max-w-none bg-secondary-100 rounded-md p-6">
+            <div class="mt-5 md:col-span-2 md:mt-0">
+
+                <div class="bg-secondary-100 px-4 py-3 text-right sm:px-6 shadow sm:rounded-md sm:w-full">
+                    <div class="sm:flex sm:flex-row-reverse">
+                        <button type="button" disabled="@Busy" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm inline-flex justify-center bg-white rounded-md border border-secondary-300 py-2 px-4 text-sm font-medium shadow-sm text-secondary-700 hover:bg-secondary-200 hover:text-primary-700 focus:z-20" @onclick="Cancel">
+                            @if (Busy)
+                            {
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                @T["Common.Busy"]
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ml-1 mr-3 h-5 w-5 hidden sm:block">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
+                                </svg>
+                                @T["Common.BackToList"]
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden sm:block" aria-hidden="true">
+                <div class="py-5">
+                    <div class="border-b border-secondary-200"></div>
+                </div>
+            </div>
+            <div class="md:grid md:grid-cols-3 md:gap-6">
+                <div class="md:col-span-1">
+                    <div class="px-4 sm:px-0">
+                        <h3 class="text-lg font-medium leading-6 text-secondary-900">@T["Accounts.Edit"]</h3>
+                    </div>
+                </div>
+                <div class="mt-5 md:col-span-2 md:mt-0">
+                    <div class="overflow-hidden bg-white shadow sm:rounded-md">
+                        <div class="border-t border-secondary-200">
+                            <dl>
+                                <div class="bg-secondary-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-secondary-500">@T["Accounts.Fields.Username"]</dt>
+                                    <dd class="mt-1 text-sm text-secondary-900 sm:col-span-2 sm:mt-0">@AccountModel?.Username</dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-secondary-500">@T["Accounts.Fields.Email"]</dt>
+                                    <dd class="mt-1 text-sm text-secondary-900 sm:col-span-2 sm:mt-0">@AccountModel?.Email</dd>
+                                </div>
+                                <div class="bg-secondary-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-secondary-500">@T["Accounts.Fields.FirstName"]</dt>
+                                    <dd class="mt-1 text-sm text-secondary-900 sm:col-span-2 sm:mt-0">@AccountModel?.FirstName</dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-secondary-500">@T["Accounts.Fields.LastName"]</dt>
+                                    <dd class="mt-1 text-sm text-secondary-900 sm:col-span-2 sm:mt-0">@AccountModel?.LastName</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
